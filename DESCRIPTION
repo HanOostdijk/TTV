@@ -1,10 +1,13 @@
 Package: TTV
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: R functions for use at table tennis club
+Version: 0.0.0.1
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person(given = "Han",
+           family = "Oostdijk",
+           role = c("aut", "cre"),
+           email = "han@hanoostdijk.nl",
+           comment = c(ORCID = "0000-0001-6710-4566"))
+Description: R functions that help with the administration of the website of a table tennis club.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

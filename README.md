@@ -6,7 +6,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-R functions for use at table tennis club
+R functions that help with the administration of the website of a table
+tennis club.
 
 ## Installation
 
