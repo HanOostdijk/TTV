@@ -1,2 +1,2 @@
 # TTV
-functions for use at table tennis club
+R functions for use at table tennis club
