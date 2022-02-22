@@ -10,6 +10,7 @@ R functions that help with the administration of the website of a table
 tennis club.
 
 -   create_html_table : create the html to display a data.frame
+-   read_registerpdf : read a PDF registration form into data.frame
 
 ## Installation
 
