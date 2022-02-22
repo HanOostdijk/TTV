@@ -9,6 +9,8 @@
 R functions that help with the administration of the website of a table
 tennis club.
 
+-   create_html_table : create the html to display a data.frame
+
 ## Installation
 
 You can install the development version of TTV from

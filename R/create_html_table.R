@@ -41,19 +41,19 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL) {
     dplyr::pull(line)          # convert to list of rows
 
   if (any(0 < purrr::map_dbl(header, length))) {
-   # htmltools::div(
+   htmltools::div(
       htmltools::tags$table(class = class, border = 0, cellspacing = 0,
         cellpadding = 0, style = 'border-collapse:collapse;border:none;',
         purrr::map(header,  ~ tr(., type = "th")),
         purrr::map(d, tr)
       )
-   # )
+   )
   } else {
-   # htmltools::div(
+   htmltools::div(
       htmltools::tags$table(class = class, border = 0, cellspacing = 0,
         cellpadding = 0, style = 'border-collapse:collapse;border:none;',
         purrr::map(d, tr)
       )
-   # )
+   )
   }
 }
