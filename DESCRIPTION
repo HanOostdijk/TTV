@@ -1,6 +1,6 @@
 Package: TTV
 Title: R functions for use at table tennis club
-Version: 0.0.0.2
+Version: 0.0.0.3
 Authors@R: 
     person(given = "Han",
            family = "Oostdijk",

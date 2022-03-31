@@ -106,3 +106,82 @@ read_registerpdf <-  function (filename) {
   )
   df6
 }
+
+#' convert registration info read from form to data.frame for member admin of TTV Amstelveen
+#'
+#' @name convert_reginfo_to_memadm
+#' @param df1 data.frame read by read_registerpdf
+#' @return A data.frame with the converted to format fit for member administration
+#' @export
+#' @examples
+#' \dontrun{
+#' df2 <- convert_reginfo_to_memadm(df1)
+#' }
+
+convert_reginfo_to_memadm <- function(df1){
+  `%>%` <- magrittr::`%>%`
+  stopifnot(nrow(df1) == 1)
+  df2 <- df1 %>%
+    dplyr::mutate(
+      volgnr = 1,
+      Bondsnr = "?",
+      CG = "?",
+      `Para-TT` = "?" ,
+      `Geb.datum` = Geboortedatum ,
+      age_now = lubridate::as.duration(
+        lubridate::interval(Geboortedatum,lubridate::today())) %/%
+        lubridate::as.duration(lubridate::years(1)) ,
+      `J/S` = paste(ifelse(age_now<19,"?J","?S"),": nu",age_now,"jaar"),
+      Categorie = "?" ,
+      ELO = "?",
+      LJ = "?",
+      LS = "?",
+      `M/V` = ifelse(Geslacht == "man","M","V"),
+      Naam = paste0(Achternaam,", ",`Voorna(a)m(en)`," ?"),
+      Voornaam = `Voorna(a)m(en)`,
+      Adres = `Straatnaam en Huisnummer`,
+      Postcode = stringr::str_sub(`Postcode en Woonplaats`,1,7) %>%
+        toupper() %>%
+        stringr::str_remove_all(" ") %>%
+        (function (x) paste(stringr::str_sub(x,1,4),stringr::str_sub(x,5,6))),
+      Woonplaats = stringr::str_sub(`Postcode en Woonplaats`,8) %>%
+        stringr::str_trim() ,
+      Telefoon = "?",
+      Mobiel1 = `Mobiel nummer`,
+      `Mobiel2 (ouders)` = `Mobiel nummer ouders/verzorgers`,
+      Email1  = `Email adres`,
+      `Email2 (ouders)`  = `Email adres ouders/verzorgers` ,
+      `Lid sinds` = `Datum aanvraag lidmaatschap`,
+      Lang_inschr = lang
+    ) %>%
+    dplyr::select(-age_now) %>%
+    dplyr::select(volgnr:Lang_inschr)
+}
+
+#' write converted registration info to Excel sheet for member admin of TTV Amstelveen
+#'
+#' @name write_reginfo_to_memadm
+#' @param df1 data.frame created by convert_reginfo_to_memadm
+#' @param wbname Character string with name of workbook to write to
+#' @return invisible(0)
+#' @section Details:
+#' The sheetname is "Nederlands" or "Engels" depending on the language of the (converted) registration form
+#' @export
+#' @examples
+#' \dontrun{
+#' df1 <- read_registerpdf(filename)
+#' df2 <- convert_reginfo_to_memadm(df1)
+#' write_reginfo_to_memadm(df2)
+#' }
+write_reginfo_to_memadm <- function(df1,wbname="inschrijf.xlsx") {
+  wb <- openxlsx::createWorkbook("inschrijf")
+  if (df1$Lang_inschr[1] == "NL") {
+    sheetname <- "Nederlands"
+  } else {
+    sheetname <- "Engels"
+  }
+  openxlsx::addWorksheet(wb, sheetname)
+  openxlsx::writeData(wb, sheet = 1, df1)
+  openxlsx::saveWorkbook(wb, wbname, overwrite = TRUE)
+}
+
