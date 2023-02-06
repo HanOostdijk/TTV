@@ -4,7 +4,7 @@
 #' @param df1 data.frame for which an html table representation will be mad
 #' @param header list of character vectors to use as th table headers. Each vector generate one header row.
 #' @param class Character string with the class name to assign to the table statement
-#' @return A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
+#' @return An HTML string that can be  saved to a file with save_html().
 #' @export
 #' @examples
 #' \dontrun{
@@ -37,11 +37,11 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL) {
   d <- df1 %>%          # table rows
     dplyr::mutate(dplyr::across(where(is.numeric), as.character)) %>%
     dplyr::rowwise() %>%
-    dplyr::transmute(line = list(c(dplyr::c_across()))) %>%
+    dplyr::transmute(line = list(c(dplyr::c_across(tidyselect::everything())))) %>%
     dplyr::pull(line)          # convert to list of rows
 
   if (any(0 < purrr::map_dbl(header, length))) {
-   htmltools::div(
+   html1 <- htmltools::div(
       htmltools::tags$table(class = class, border = 0, cellspacing = 0,
         cellpadding = 0, style = 'border-collapse:collapse;border:none;',
         purrr::map(header,  ~ tr(., type = "th")),
@@ -49,11 +49,12 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL) {
       )
    )
   } else {
-   htmltools::div(
+    html1 <- htmltools::div(
       htmltools::tags$table(class = class, border = 0, cellspacing = 0,
         cellpadding = 0, style = 'border-collapse:collapse;border:none;',
         purrr::map(d, tr)
       )
    )
   }
+  html1 <- stringr::str_replace_all(as.character(html1),"  "," ")
 }

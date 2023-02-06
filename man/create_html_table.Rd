@@ -14,7 +14,7 @@ create_html_table(df1, header = list(names(df1)), class = NULL)
 \item{class}{Character string with the class name to assign to the table statement}
 }
 \value{
-A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
+An HTML string that can be  saved to a file with save_html().
 }
 \description{
 create the html to display a data.frame
