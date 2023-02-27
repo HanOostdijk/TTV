@@ -4,7 +4,7 @@
 #' @param df1 data.frame for which an html table representation will be mad
 #' @param header list of character vectors to use as th table headers. Each vector generate one header row.
 #' @param class Character string with the class name to assign to the table statement
-#' @return An HTML string that can be  saved to a file with save_html().
+#' @return A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
 #' @export
 #' @examples
 #' \dontrun{
@@ -14,9 +14,9 @@
 #'
 
 
-create_html_table <- function(df1, header = list(names(df1)),class=NULL) {
+create_html_table <- function(df1, header = list(names(df1)),class=NULL,compress=F) {
 
-  `%>%` <- magrittr::`%>%`
+ #  `%>%` <- magrittr::`%>%`
 
   td <- function(x) {
   htmltools::tags$td(htmltools::HTML(x), .noWS = "outside")
@@ -35,9 +35,9 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL) {
   }
 
   d <- df1 %>%          # table rows
-    dplyr::mutate(dplyr::across(where(is.numeric), as.character)) %>%
-    dplyr::rowwise() %>%
-    dplyr::transmute(line = list(c(dplyr::c_across(tidyselect::everything())))) %>%
+    dplyr::mutate(dplyr::across(where(is.numeric), as.character)) |>
+    dplyr::rowwise() |>
+    dplyr::transmute(line = list(c(dplyr::c_across(tidyselect::everything())))) |>
     dplyr::pull(line)          # convert to list of rows
 
   if (any(0 < purrr::map_dbl(header, length))) {
@@ -56,5 +56,5 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL) {
       )
    )
   }
-  html1 <- stringr::str_replace_all(as.character(html1),"  "," ")
+  html1
 }

@@ -4,7 +4,7 @@
 \alias{create_html_table}
 \title{create the html to display a data.frame}
 \usage{
-create_html_table(df1, header = list(names(df1)), class = NULL)
+create_html_table(df1, header = list(names(df1)), class = NULL, compress = F)
 }
 \arguments{
 \item{df1}{data.frame for which an html table representation will be mad}
@@ -14,7 +14,7 @@ create_html_table(df1, header = list(names(df1)), class = NULL)
 \item{class}{Character string with the class name to assign to the table statement}
 }
 \value{
-An HTML string that can be  saved to a file with save_html().
+A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
 }
 \description{
 create the html to display a data.frame
