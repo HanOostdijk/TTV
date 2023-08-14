@@ -4,14 +4,21 @@
 \alias{create_html_table}
 \title{create the html to display a data.frame}
 \usage{
-create_html_table(df1, header = list(names(df1)), class = NULL, compress = F)
+create_html_table(
+  df1,
+  header = list(names(df1)),
+  class = NULL,
+  tr_class = NULL
+)
 }
 \arguments{
 \item{df1}{data.frame for which an html table representation will be mad}
 
 \item{header}{list of character vectors to use as th table headers. Each vector generate one header row.}
 
-\item{class}{Character string with the class name to assign to the table statement}
+\item{class}{Character string with the class name to assign to the table tag}
+
+\item{tr_class}{Character string with the class name to assign to the tr tags}
 }
 \value{
 A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().

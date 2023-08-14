@@ -3,7 +3,8 @@
 #' @name create_html_table
 #' @param df1 data.frame for which an html table representation will be mad
 #' @param header list of character vectors to use as th table headers. Each vector generate one header row.
-#' @param class Character string with the class name to assign to the table statement
+#' @param class Character string with the class name to assign to the table tag
+#' @param tr_class Character string with the class name to assign to the tr tags
 #' @return A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
 #' @export
 #' @examples
@@ -14,9 +15,7 @@
 #'
 
 
-create_html_table <- function(df1, header = list(names(df1)),class=NULL,compress=F) {
-
- #  `%>%` <- magrittr::`%>%`
+create_html_table <- function(df1, header = list(names(df1)),class=NULL,tr_class=NULL) {
 
   td <- function(x) {
   htmltools::tags$td(htmltools::HTML(x), .noWS = "outside")
@@ -26,11 +25,11 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL,compress
     htmltools::tags$th(htmltools::HTML(x), .noWS = "outside")
   }
 
-  tr <- function(x, type = "td") {
+  tr <- function(x, type = "td",tr_classi=tr_class) {
     if (type == "th") {
-      htmltools::tags$tr(purrr::map(x, th))
+      htmltools::tags$tr(purrr::map(x, th),class=tr_classi)
     } else {
-      htmltools::tags$tr(purrr::map(x, td))
+      htmltools::tags$tr(purrr::map(x, td),class=tr_classi)
     }
   }
 
