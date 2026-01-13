@@ -4,6 +4,7 @@
 #' @param df1 data.frame for which an html table representation will be mad
 #' @param header list of character vectors to use as th table headers. Each vector generate one header row.
 #' @param class Character string with the class name to assign to the table tag
+#' @param style Character string with the style information to assign to the table tag
 #' @param tr_class Character string with the class name to assign to the tr tags
 #' @return A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
 #' @export
@@ -15,7 +16,9 @@
 #'
 
 
-create_html_table <- function(df1, header = list(names(df1)),class=NULL,tr_class=NULL) {
+create_html_table <- function(df1, header = list(names(df1)),
+                              class=NULL,tr_class=NULL,
+                              style='border-collapse:collapse;border:none;') {
 
   td <- function(x) {
   htmltools::tags$td(htmltools::HTML(x), .noWS = "outside")
@@ -42,7 +45,7 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL,tr_class
   if (any(0 < purrr::map_dbl(header, length))) {
    html1 <- htmltools::div(
       htmltools::tags$table(class = class, border = 0, cellspacing = 0,
-        cellpadding = 0, style = 'border-collapse:collapse;border:none;',
+        cellpadding = 0, style = style,
         purrr::map(header,  ~ tr(., type = "th")),
         purrr::map(d, tr)
       )
@@ -50,7 +53,7 @@ create_html_table <- function(df1, header = list(names(df1)),class=NULL,tr_class
   } else {
     html1 <- htmltools::div(
       htmltools::tags$table(class = class, border = 0, cellspacing = 0,
-        cellpadding = 0, style = 'border-collapse:collapse;border:none;',
+        cellpadding = 0, style = style,
         purrr::map(d, tr)
       )
    )
