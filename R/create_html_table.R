@@ -1,24 +1,49 @@
 #' create the html to display a data.frame
 #'
 #' @name create_html_table
-#' @param df1 data.frame for which an html table representation will be mad
-#' @param header list of character vectors to use as th table headers. Each vector generate one header row.
+#' @param df1 data.frame for which an html table representation will be made
+#' @param header list of character vectors to use as th table headers. Each vector generates one header row.
 #' @param class Character string with the class name to assign to the table tag
-#' @param style Character string with the style information to assign to the table tag
+#' @param caption Character string with the caption for the table
 #' @param tr_class Character string with the class name to assign to the tr tags
+#' @param html_include Character string with html code that is included before the table statement
+#' @param tstyle Character string with the style information to assign to the table tag
 #' @return A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
 #' @export
 #' @examples
 #' \dontrun{
+#'  fit_table_def <- "
+#'   <style>
+#'   .fit-table {
+#'     width: auto;
+#'     table-layout: auto;
+#'   }
+#'
+#'   .fit-table th, td {
+#'     padding: 10px;
+#'     border: none;
+#'     white-space: nowrap;
+#'   }
+#'
+#'   .fit-table  tr {
+#'     line-height: 80%;
+#'     text-align: left;
+#'   }
+#'   </style>
+#'   "
+#'
 #' df1 <- data.frame(f1=c(1,2),f2=c("A","B"))
-#' st <- create_html_table(df1)
+#' st <- create_html_table(df1,tstyle='border-collapse:collapse;border:none;')
+#' st <- create_html_table(df1,class="fit-table",html_include=fit_table_def)
+#' st <- create_html_table(df1,caption="this is my caption")
 #' }
 #'
 
 
 create_html_table <- function(df1, header = list(names(df1)),
-                              class=NULL,tr_class=NULL,
-                              style='border-collapse:collapse;border:none;') {
+                              class=NULL,tr_class=NULL, caption=NULL,
+                              html_include = NULL,
+                              tstyle=NULL) {
 
   td <- function(x) {
   htmltools::tags$td(htmltools::HTML(x), .noWS = "outside")
@@ -42,21 +67,17 @@ create_html_table <- function(df1, header = list(names(df1)),
     dplyr::transmute(line = list(c(dplyr::c_across(tidyselect::everything())))) |>
     dplyr::pull(line)          # convert to list of rows
 
-  if (any(0 < purrr::map_dbl(header, length))) {
-   html1 <- htmltools::div(
-      htmltools::tags$table(class = class, border = 0, cellspacing = 0,
-        cellpadding = 0, style = style,
-        purrr::map(header,  ~ tr(., type = "th")),
-        purrr::map(d, tr)
+  html1 <- htmltools::div(
+      htmltools::tags$table(class = class, style = tstyle,
+        if (!is.null(caption)) htmltools::tags$caption(caption)  ,
+      if (any(0 < purrr::map_dbl(header, length))) purrr::map(header,  ~ tr(., type = "th")),
+      purrr::map(d, tr)
       )
    )
+
+  if (!is.null(html_include)) {
+    htmltools::tags$html(htmltools::HTML(html_include) , html1)
   } else {
-    html1 <- htmltools::div(
-      htmltools::tags$table(class = class, border = 0, cellspacing = 0,
-        cellpadding = 0, style = style,
-        purrr::map(d, tr)
-      )
-   )
+    html1
   }
-  html1
 }
