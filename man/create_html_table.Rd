@@ -7,29 +7,78 @@
 create_html_table(
   df1,
   header = list(names(df1)),
-  class = NULL,
-  tr_class = NULL
+  tableclass = NULL,
+  tablestyle = NULL,
+  thclass = NULL,
+  thstyle = NULL,
+  tdclass = NULL,
+  tdstyle = NULL,
+  caption = NULL,
+  captionclass = NULL,
+  captionstyle = NULL,
+  html_include = NULL
 )
 }
 \arguments{
-\item{df1}{data.frame for which an html table representation will be mad}
+\item{df1}{data.frame for which an html table representation will be made}
 
-\item{header}{list of character vectors to use as th table headers. Each vector generate one header row.}
+\item{header}{list of character vectors to use as th table headers. Each vector generates one header row.}
 
-\item{class}{Character string with the class name to assign to the table tag}
+\item{tableclass}{Character string with the class name to assign to the table tag}
 
-\item{tr_class}{Character string with the class name to assign to the tr tags}
+\item{tablestyle}{Character string with the style information to assign to the table tag}
+
+\item{thclass}{Character string with the class name to assign to the th tags}
+
+\item{thstyle}{Character string with the style information to assign to the th tags}
+
+\item{tdclass}{Character string with the class name to assign to the td tags}
+
+\item{tdstyle}{Character string with the style information to assign to the td tags}
+
+\item{caption}{Character string with the table caption}
+
+\item{captionclass}{Character string with the class for the table caption}
+
+\item{captionstyle}{Character string with the style for the table caption}
+
+\item{html_include}{Character string with html code that is included before the table statement}
 }
 \value{
-A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with save_html().
+A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with htmltools::save_html().
 }
 \description{
-create the html to display a data.frame
+This function is totally depended on the package \code{htmltools}
 }
 \examples{
 \dontrun{
+ fit_table_def <- "
+  <style>
+  .fit-table {
+    width: auto;
+    table-layout: auto;
+  }
+
+  .fit-table th, td {
+    padding: 10px;
+    border: none;
+    white-space: nowrap;
+  }
+
+  .fit-table  tr {
+    line-height: 80\%;
+    text-align: left;
+  }
+  </style>
+  "
+
 df1 <- data.frame(f1=c(1,2),f2=c("A","B"))
-st <- create_html_table(df1)
+st <- create_html_table(df1,tablestyle='border-collapse:collapse;border:none;')
+st <- create_html_table(df1,tableclass="fit-table",html_include=fit_table_def)
+st <- create_html_table(df1,caption="this is my caption",
+           captionstyle="white-space: nowrap;caption-side: bottom;")
+cat( as.character(st) )
+htmltools::save_html(st,'test.html')
 }
 
 }

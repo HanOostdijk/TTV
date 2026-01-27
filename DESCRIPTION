@@ -24,4 +24,5 @@ Imports:
     stringr,
     dplyr,
     purrr,
-    tidyr
+    tidyr,
+    htmltools
