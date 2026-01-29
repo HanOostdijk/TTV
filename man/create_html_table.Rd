@@ -2,13 +2,13 @@
 % Please edit documentation in R/create_html_table.R
 \name{create_html_table}
 \alias{create_html_table}
+\alias{create_style_table}
 \title{create the html to display a data.frame}
 \usage{
 create_html_table(
   df1,
   header = list(names(df1)),
   tableclass = NULL,
-  tablestyle = NULL,
   thclass = NULL,
   thstyle = NULL,
   tdclass = NULL,
@@ -18,15 +18,28 @@ create_html_table(
   captionstyle = NULL,
   html_include = NULL
 )
+
+create_style_table(
+  classname = NULL,
+  tabborder = "2px solid black",
+  border = "1px solid #ddd",
+  width = "auto",
+  padding_left = "4px",
+  padding_top = padding_left,
+  padding_right = padding_left,
+  padding_bottom = padding_top,
+  text_align = "center",
+  background_color = "white",
+  color = "black",
+  ws = ""
+)
 }
 \arguments{
 \item{df1}{data.frame for which an html table representation will be made}
 
-\item{header}{list of character vectors to use as th table headers. Each vector generates one header row.}
+\item{header}{Character vector or list of character vectors or matrix of character string to use as th table headers. Each vector or matrix row generates one header row.}
 
 \item{tableclass}{Character string with the class name to assign to the table tag}
-
-\item{tablestyle}{Character string with the style information to assign to the table tag}
 
 \item{thclass}{Character string with the class name to assign to the th tags}
 
@@ -43,12 +56,43 @@ create_html_table(
 \item{captionstyle}{Character string with the style for the table caption}
 
 \item{html_include}{Character string with html code that is included before the table statement}
+
+\item{classname}{Character string with the class name to use in this style}
+
+\item{tabborder}{Character string with \code{border} definition for \code{table}}
+
+\item{border}{Character string with \code{border} definition for \code{th} and \code{td}}
+
+\item{width}{Character string with \code{width} definition for \code{table}. E.g. \code{"auto"} or \code{"50\%"}}
+
+\item{padding_left}{Character string with \code{padding-left} definition for \code{th} and \code{td}}
+
+\item{padding_top}{Character string with \code{padding-top} definition for \code{th} and \code{td}}
+
+\item{padding_right}{Character string with \code{padding-right} definition for \code{th} and \code{td}}
+
+\item{padding_bottom}{Character string with \code{padding-bottom} definition for \code{th} and \code{td}}
+
+\item{text_align}{Character string with \code{text-align} definition for \code{th} and \code{td}}
+
+\item{background_color}{Character string with \code{background-color} definition for \code{th} and \code{td}}
+
+\item{color}{Character string with \code{color} definition for \code{th} and \code{td}}
 }
 \value{
-A list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with htmltools::save_html().
+For \code{create_html_table} a list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with htmltools::save_html().
+
+For \code{create_style_table} a Character string with the generated \verb{<style>} information
 }
 \description{
-This function is totally depended on the package \code{htmltools}
+The function \code{create_html_table} creates the html to display the rows of a data.frame in the table format. \cr
+The header can be missing or contain one or more rows with the default being the names of the data.frame. \cr
+A classname for the table and a caption with its class and style can be specified. \cr
+Also for the \code{td} and \code{th} elements a class and style can be specified. However see the \code{create_style_table} function.\cr
+Is is possible to include a character string containing html information. This information can contain a \code{style} definition.
+\cr
+The function \code{create_style_table} creates style information that can be included by using the \code{html_include} argument of the \code{create_html_table} function.
+This is an alternative for specifying the class and style for the \code{th} and \code{td} elements.
 }
 \examples{
 \dontrun{
@@ -73,12 +117,18 @@ This function is totally depended on the package \code{htmltools}
   "
 
 df1 <- data.frame(f1=c(1,2),f2=c("A","B"))
-st <- create_html_table(df1,tablestyle='border-collapse:collapse;border:none;')
+st <- create_html_table(df1)
 st <- create_html_table(df1,tableclass="fit-table",html_include=fit_table_def)
 st <- create_html_table(df1,caption="this is my caption",
            captionstyle="white-space: nowrap;caption-side: bottom;")
 cat( as.character(st) )
 htmltools::save_html(st,'test.html')
+}
+
+\dontrun{
+create_style_table(classname="mc")
+create_style_table(tabborder="2px solid black", background_color = "#00ffFF",
+   color="red",padding_top = "12px",padding_bottom = "2px")
 }
 
 }

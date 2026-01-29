@@ -3,6 +3,7 @@
 export(convert_df_vcf)
 export(convert_reginfo_to_memadm)
 export(create_html_table)
+export(create_style_table)
 export(gen_vcf)
 export(read_registerpdf)
 export(write_reginfo_to_memadm)
