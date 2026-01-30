@@ -92,7 +92,7 @@ create_html_table <- function(df1, header = list(names(df1)),
 }
 
 
-create_matrix <- function(m) {
+create_matrix <- function(m=NULL) {
   if (is.null(m)) return( NULL)
   n <- -1
   if (is.list(m)) {
@@ -103,6 +103,7 @@ create_matrix <- function(m) {
   if (is.character(m)) {
     nr <- 1 ; nc <- length(m)
   }
+  if (0 %in% c(nr,nc)) return( NULL)
   matrix(unlist(m),nrow=nr,ncol=nc,byrow=T)
 }
 

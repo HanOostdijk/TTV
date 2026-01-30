@@ -10,7 +10,30 @@ fy <- function (tags1) {
   x <- htmltools::renderTags(tags1)
   fx(x$html)
 }
+
 # tests
+test_that("create_matrix okay?", {
+  st1 <-  TTV:::create_matrix()
+  expect_null(st1)
+  st2 <-  TTV:::create_matrix(list())
+  expect_null(st2)
+  st3 <-  TTV:::create_matrix(list('a'))
+  expect_equal(st3,matrix("a"))
+  st4 <-  TTV:::create_matrix(list('a','b'))
+  res4 <- matrix(c("a","b"),nr=2)
+  expect_equal(st4,res4)
+  st5 <-  TTV:::create_matrix(list(c('a','b')))
+  res5 <- matrix(c("a","b"),nr=1)
+  expect_equal(st5,res5)
+  st6 <-  TTV:::create_matrix(list(c('a','b'),c('c','d')))
+  res6 <- matrix(c("a","b","c","d"),nr=2,byrow=T)
+  expect_equal(st6,res6)
+  st7 <-  TTV:::create_matrix( c('a','b') )
+  res7 <- matrix(c("a","b"),nr=1)
+  expect_equal(st7,res7)
+
+})
+
 test_that("create_style_table okay?", {
   st1 <-  create_style_table()
   res1 <- "<style> table { border-collapse: collapse; border: 2px solid black; table-layout: auto; width: auto; } :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style>"
@@ -21,18 +44,19 @@ test_that("create_style_table okay?", {
   st3 <- create_style_table(ws="nowrap")
   res3 <- "<style> table { border-collapse: collapse; border: 2px solid black; table-layout: auto; width: auto; } :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; white-space: nowrap; } </style>"
   expect_equal(fx(st3),res3)
-  st4 <- create_style_table(classname="mc")
-  res4 <- "<style> table.mc { border-collapse: collapse; border: 2px solid black; table-layout: auto; width: auto; } .mc :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style>"
+  st4 <- create_style_table(classname="mc",tabborder="2px solid red")
+  res4 <- "<style> table.mc { border-collapse: collapse; border: 2px solid red; table-layout: auto; width: auto; } .mc :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style>"
   expect_equal(fx(st4),res4)
   st5 <- create_html_table(df1,tableclass="mc",html_include = st4)
-  res5 <- "<html> <style> table.mc { border-collapse: collapse; border: 2px solid black; table-layout: auto; width: auto; } .mc :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style> <div> <table class=\"mc\"> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div> </html>"
+  res5 <- "<html> <style> table.mc { border-collapse: collapse; border: 2px solid red; table-layout: auto; width: auto; } .mc :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style> <div> <table class=\"mc\"> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div> </html>"
   expect_equal(fx(st5),res5)
 })
 
 test_that("create_header okay?", {
   st1 <- create_header(NULL)
-  res1 <- NULL
   expect_equal(st1,list())
+  st1a <- create_header(list())
+  expect_equal(st1a,list())
   st2 <- fy(create_header(names(df1)))
   res2 <- "<tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr>"
   expect_equal(st2,res2)
