@@ -1,4 +1,11 @@
 # input test data.frame
+
+# voor testen buiten de interface
+  # library(TTV)
+  # library(testthat)
+  # hb <- htmltools::browsable
+#
+
 df1 <- data.frame(f1=1:2,f2=3:4,f3=5:6,f4=c("A","B"))
 # aux funs
 fx <- function (html1) {
@@ -41,7 +48,7 @@ test_that("create_style_table okay?", {
   st2 <- create_style_table(width="50%")
   res2 <- "<style> table { border-collapse: collapse; border: 2px solid black; table-layout: auto; width: 50%; } :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style>"
   expect_equal(fx(st2),res2)
-  st3 <- create_style_table(ws="nowrap")
+  st3 <- create_style_table(white_space="nowrap")
   res3 <- "<style> table { border-collapse: collapse; border: 2px solid black; table-layout: auto; width: auto; } :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; white-space: nowrap; } </style>"
   expect_equal(fx(st3),res3)
   st4 <- create_style_table(classname="mc",tabborder="2px solid red")
@@ -72,6 +79,9 @@ test_that("create_html_table okay?", {
   st1 <- fx(create_html_table(df1))
   res1 <- "<div> <table> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div>"
   expect_equal(st1,fx(res1))
+  st1a <- fx(create_html_table(df1 |> dplyr::filter(F)))
+  res1a <- "<div> <table> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> </table> </div>"
+  expect_equal(st1a,fx(res1a))
   st2 <- fx(create_html_table(df1,tableclass="aap-noot"))
   res2 <-  "<div> <table class=\"aap-noot\"> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div>"
   expect_equal(st2,fx(res2))

@@ -31,7 +31,7 @@ create_style_table(
   text_align = "center",
   background_color = "white",
   color = "black",
-  ws = ""
+  white_space = NULL
 )
 }
 \arguments{
@@ -77,58 +77,98 @@ create_style_table(
 
 \item{background_color}{Character string with \code{background-color} definition for \code{th} and \code{td}}
 
-\item{color}{Character string with \code{color} definition for \code{th} and \code{td}}
+\item{color}{Character string with \code{color} definition for \code{th} and \code{td}#'}
+
+\item{white_space}{Character string with \code{white-space} definition for \code{th} and \code{td}}
 }
 \value{
-For \code{create_html_table} a list() with a shiny.tag class that can be converted into an HTML string via as.character() and saved to a file with htmltools::save_html().
+For \code{create_html_table} a list() with a shiny.tag class that can be converted into an HTML string via \code{as.character()}, viewed with \code{htmltools::browsable()} and saved to a file with \code{htmltools::save_html()} .
 
-For \code{create_style_table} a Character string with the generated \verb{<style>} information
+For \code{create_style_table} a character string with the generated style block information.
 }
 \description{
 The function \code{create_html_table} creates the html to display the rows of a data.frame in the table format. \cr
 The header can be missing or contain one or more rows with the default being the names of the data.frame. \cr
 A classname for the table and a caption with its class and style can be specified. \cr
 Also for the \code{td} and \code{th} elements a class and style can be specified. However see the \code{create_style_table} function.\cr
-Is is possible to include a character string containing html information. This information can contain a \code{style} definition.
+It is possible to include a character string containing html information via the \code{html_include} argument.
+This information can contain a \code{style} definition.\cr
 \cr
-The function \code{create_style_table} creates style information that can be included by using the \code{html_include} argument of the \code{create_html_table} function.
+The function \code{create_style_table} creates style information that can also be included by using the \code{html_include} argument of the \code{create_html_table} function.
 This is an alternative for specifying the class and style for the \code{th} and \code{td} elements.
+The function uses a style template that is filled in with the arguments of function. See \code{template_create_style_table} in the examples.
+If the template does not satisfy your needs, you can specify your own template such as is done in the example \code{fit_table_def}.
 }
 \examples{
 \dontrun{
+
+# the style used in create_style_table is given below. The arguments of the function are glue-wise
+# inserted between (^,$) pairs with exception of classname, width and white_space that get some preprocessing:
+#  class1 <- ifelse(is.null(classname),"",paste0(".",classname))
+#  width1 <- ifelse((is.null(width)||(nchar(width)==0)),"",paste0("width: ",width,";"))
+#  ws1    <- ifelse((is.null(white_space)||(nchar(white_space)==0)),"",paste0("white-space: ",white_space,";"))
+template_create_style_table <- "
+<style>
+  table^class1$ {
+    border-collapse: collapse;
+    border: ^tabborder$;
+    table-layout: auto;
+    ^width1$
+  }
+
+  ^class1$ :is(th, td) {
+  border: ^border$;
+  padding-top: ^padding_top$;
+  padding-bottom: ^padding_bottom$;
+  padding-left: ^padding_left$;
+  padding-right: ^padding_right$;
+  text-align: ^text_align$;
+  background-color : ^background_color$ ;
+  color :  ^color$ ;
+  ^ws1$
+}
+</style>
+  "
+
  fit_table_def <- "
-  <style>
-  .fit-table {
+ <style>
+   table.fit-table {
+    border: none;
     width: auto;
     table-layout: auto;
   }
 
-  .fit-table th, td {
-    padding: 10px;
+   table.fit-table th, table.fit-table td {
     border: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    text-align: var(--tabel-align, left);
     white-space: nowrap;
   }
 
-  .fit-table  tr {
-    line-height: 80\%;
-    text-align: left;
+   .is-right {
+     --tabel-align: right;
   }
-  </style>
+
+   .is-center {
+     --tabel-align: center;
+  }
+ </style>
   "
 
-df1 <- data.frame(f1=c(1,2),f2=c("A","B"))
-st <- create_html_table(df1)
-st <- create_html_table(df1,tableclass="fit-table",html_include=fit_table_def)
-st <- create_html_table(df1,caption="this is my caption",
-           captionstyle="white-space: nowrap;caption-side: bottom;")
-cat( as.character(st) )
-htmltools::save_html(st,'test.html')
+df1 <- data.frame(f1=c(1,2),f2=c("Antwerpen","Bern"))
+tb1 <- create_html_table(df1)
+tb1 <- create_html_table(df1,tableclass="fit-table is-center",html_include=fit_table_def,
+    caption="this is my caption", captionstyle="white-space: nowrap;caption-side: bottom;")
+htmltools::browsable(tb1)
+cat( as.character(tb1) )
+htmltools::save_html(tb1,'test.html')
 }
 
 \dontrun{
-create_style_table(classname="mc")
-create_style_table(tabborder="2px solid black", background_color = "#00ffFF",
+st <- create_style_table(classname="mc",tabborder="2px solid black", background_color = "#00ffFF",
    color="red",padding_top = "12px",padding_bottom = "2px")
+tb <- create_html_table(df1,tableclass="mc",html_include=st)
 }
 
 }
