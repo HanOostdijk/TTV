@@ -19,26 +19,38 @@ fy <- function (tags1) {
 }
 
 # tests
-test_that("create_matrix okay?", {
-  st1 <-  TTV:::create_matrix()
+test_that("cpm okay?", {
+  st1 <-  TTV:::cpm()
   expect_null(st1)
-  st2 <-  TTV:::create_matrix(list())
+  st2 <-  TTV:::cpm(list())
   expect_null(st2)
-  st3 <-  TTV:::create_matrix(list('a'))
-  expect_equal(st3,matrix("a"))
-  st4 <-  TTV:::create_matrix(list('a','b'))
-  res4 <- matrix(c("a","b"),nr=2)
+  st3 <-  TTV:::cpm(list('abc'))
+  res3 <- list(1L,1,list('abc'))
+  expect_equal(st3,res3)
+  st4 <-  TTV:::cpm(list('a','b'))
+  res4 <- list(2L,1L,list('a','b'))
   expect_equal(st4,res4)
-  st5 <-  TTV:::create_matrix(list(c('a','b')))
-  res5 <- matrix(c("a","b"),nr=1)
+  st5 <-  TTV:::cpm(list(c('a','b')))
+  res5 <- list(1L,2L,list(c('a','b')))
   expect_equal(st5,res5)
-  st6 <-  TTV:::create_matrix(list(c('a','b'),c('c','d')))
-  res6 <- matrix(c("a","b","c","d"),nr=2,byrow=T)
+  st6 <-  TTV:::cpm(list(c('a','b','c'),c('d','e','f')))
+  res6 <- list(2L,3L,list(c('a','b','c'),c('d','e','f')))
   expect_equal(st6,res6)
-  st7 <-  TTV:::create_matrix( c('a','b') )
-  res7 <- matrix(c("a","b"),nr=1)
+  st7 <-  TTV:::cpm( c('a','b') )
+  res7 <- list(1L,2L,list(c('a','b')))
   expect_equal(st7,res7)
-
+  st8a <-  htmltools::HTML('<a href="x">tt </a>' )
+  st8 <-  TTV:::cpm(st8a)
+  res8 <- list(1L,1L,list(st8a))
+  expect_identical(st8,res8)
+  h1 <- c('<a href="#x">x1</a>','<a href="#y">y1 </a>')
+  h2 <- purrr::map(h1,htmltools::HTML)
+  st10 <- TTV:::cpm(list(h2) )
+  res10 <- list(1L,2L,list(h2))
+  expect_identical(st10,res10)
+  st9 <-  TTV:::cpm("abc"  )
+  res9 <- list(1L,1L,list("abc"))
+  expect_equal(st9,res9)
 })
 
 test_that("create_style_table okay?", {
@@ -72,6 +84,10 @@ test_that("create_header okay?", {
   expect_equal(st3,res3)
   st4 <- fy(create_header(list(c("a","","b",""),c("","","b1","b2"))))
   res4 <- "<tr> <th rowspan=\"2\" colspan=\"2\">a</th> <th colspan=\"2\">b</th> </tr> <tr> <th>b1</th> <th>b2</th> </tr>"
+  expect_equal(st4,res4)
+  h1 <- c('<a href="#x">x1</a>','<a href="#y">y1 </a>')
+  st4 <- fy(create_header(list(purrr::map(h1,htmltools::HTML)) ))
+  res4 <- "<tr> <th><a href=\"#x\">x1</a></th> <th><a href=\"#y\">y1 </a></th> </tr>"
   expect_equal(st4,res4)
 })
 

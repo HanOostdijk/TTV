@@ -128,29 +128,28 @@ create_html_table <- function(df1, header = list(names(df1)),
   }
 }
 
-
-create_matrix <- function(m=NULL) {
+cpm <- function(m=NULL) {
+  # now done via lists to keep possible html attributes
   if (is.null(m)) return( NULL)
-  n <- -1
-  if (is.list(m)) {
-    n <- purrr::map_int(m,length)
-    if (!all(n[1] == n  ) ) stop("list elements in `create_matrix` differ in length")
-    nr <- length(n) ; nc <- n[1]
-  }
   if (is.character(m)) {
-    nr <- 1 ; nc <- length(m)
+    m <-  list(m)
   }
+  n <- purrr::map_int(m,length)
+  if (!all(n[1] == n  ) ) stop("list elements in `cpm` differ in length")
+  nr <- length(n) ; nc <- n[1]
   if (0 %in% c(nr,nc)) return( NULL)
-  matrix(unlist(m),nrow=nr,ncol=nc,byrow=T)
+  list(nr,nc,m)
 }
 
 create_header <- function(header_data, thclass=NULL, thstyle=NULL) {
-  m <- create_matrix(header_data)
+  m <- cpm(header_data)
   if (is.null(m)) return( list())
-  rows <- nrow(m)
-  cols <- ncol(m)
+  rows <-  m[[1]]
+  cols <-  m[[2]]
+  m    <-  m[[3]]
   visited <- matrix(FALSE, nrow = rows, ncol = cols)
   html_cells <- list()
+  p    <- purrr::pluck
 
   isleeg <- function(x) {
     nchar(x) == 0
@@ -163,13 +162,13 @@ create_header <- function(header_data, thclass=NULL, thstyle=NULL) {
 
       # Bepaal colspan (hoeveel lege cellen rechts?)
       curr_colspan <- 1
-      while ((j + curr_colspan) <= cols && (isleeg(m[i, j + curr_colspan]) || m[i, j + curr_colspan] == "")) {
+      while ((j + curr_colspan) <= cols && (isleeg(p(m,i, j + curr_colspan)))) {
         curr_colspan <- curr_colspan + 1
       }
 
       # Bepaal rowspan (hoeveel lege cellen onder?)
       curr_rowspan <- 1
-      while ((i + curr_rowspan) <= rows && (isleeg(m[i + curr_rowspan, j]) || m[i + curr_rowspan, j] == "")) {
+      while ((i + curr_rowspan) <= rows && (isleeg(p(m,i + curr_rowspan, j)))) {
         curr_rowspan <- curr_rowspan + 1
       }
 
@@ -180,7 +179,7 @@ create_header <- function(header_data, thclass=NULL, thstyle=NULL) {
       row_cells[[length(row_cells) + 1]] <- htmltools::tags$th(
         rowspan = if(curr_rowspan > 1) curr_rowspan else NULL,
         colspan = if(curr_colspan > 1) curr_colspan else NULL,
-        m[i, j], class=thclass, style=thstyle
+        p(m,i, j), class=thclass, style=thstyle
       )
     }
     html_cells[[i]] <- htmltools::tags$tr(row_cells)
