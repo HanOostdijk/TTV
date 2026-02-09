@@ -113,13 +113,11 @@ create_html_table <- function(df1, header = list(names(df1)),
     dplyr::transmute(line = list(c(dplyr::c_across(tidyselect::everything())))) |>
     dplyr::pull(line)          # convert to list of rows
 
-  html1 <- htmltools::div(
-      htmltools::tags$table(class = tableclass,
+  html1 <- htmltools::tags$table(class = tableclass,
         if (!is.null(caption)) htmltools::tags$caption(caption,class=captionclass,style=captionstyle)  ,
         if (!is.null(ch)) ch  ,
         purrr::map(d,      ~ htmltools::tags$tr(purrr::map(., ~td(.,td_class=tdclass,td_style=tdstyle))))
       )
-   )
 
   if (!is.null(html_include)) {
     htmltools::tags$html(htmltools::HTML(html_include) , html1)

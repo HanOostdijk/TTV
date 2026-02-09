@@ -67,7 +67,7 @@ test_that("create_style_table okay?", {
   res4 <- "<style> table.mc { border-collapse: collapse; border: 2px solid red; table-layout: auto; width: auto; } .mc :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style>"
   expect_equal(fx(st4),res4)
   st5 <- create_html_table(df1,tableclass="mc",html_include = st4)
-  res5 <- "<html> <style> table.mc { border-collapse: collapse; border: 2px solid red; table-layout: auto; width: auto; } .mc :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style> <div> <table class=\"mc\"> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div> </html>"
+  res5 <- "<html> <style> table.mc { border-collapse: collapse; border: 2px solid red; table-layout: auto; width: auto; } .mc :is(th, td) { border: 1px solid #ddd; padding-top: 4px; padding-bottom: 4px; padding-left: 4px; padding-right: 4px; text-align: center; background-color : white ; color : black ; } </style> <table class=\"mc\"> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </html>"
   expect_equal(fx(st5),res5)
 })
 
@@ -93,24 +93,24 @@ test_that("create_header okay?", {
 
 test_that("create_html_table okay?", {
   st1 <- fx(create_html_table(df1))
-  res1 <- "<div> <table> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div>"
+  res1 <- "<table> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table>"
   expect_equal(st1,fx(res1))
   st1a <- fx(create_html_table(df1 |> dplyr::filter(F)))
-  res1a <- "<div> <table> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> </table> </div>"
+  res1a <- "<table> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> </table>"
   expect_equal(st1a,fx(res1a))
   st2 <- fx(create_html_table(df1,tableclass="aap-noot"))
-  res2 <-  "<div> <table class=\"aap-noot\"> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div>"
+  res2 <-  "<table class=\"aap-noot\"> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table>"
   expect_equal(st2,fx(res2))
   st3 <- fx(create_html_table(df1,tableclass="aap-noot",header = list(c("X","Y"))))
-  res3 <- "<div> <table class=\"aap-noot\"> <tr> <th>X</th> <th>Y</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div>"
+  res3 <- "<table class=\"aap-noot\"> <tr> <th>X</th> <th>Y</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table>"
   expect_equal(st3,fx(res3))
   st6 <- fx(create_html_table(df1, header=NULL))
-  res6 <-  "<div> <table> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div>"
+  res6 <-  "<table> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table>"
   expect_equal(st6,fx(res6))
   st8 <- fx(create_html_table(df1,caption="my caption",captionclass="mycaptionclass",,captionstyle="white-space: nowrap;caption-side: bottom;"))
-  res8 <- "<div> <table> <caption class=\"mycaptionclass\" style=\"white-space: nowrap;caption-side: bottom;\">my caption</caption> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table> </div>"
+  res8 <- "<table> <caption class=\"mycaptionclass\" style=\"white-space: nowrap;caption-side: bottom;\">my caption</caption> <tr> <th>f1</th> <th>f2</th> <th>f3</th> <th>f4</th> </tr> <tr><td>1</td><td>3</td><td>5</td><td>A</td></tr> <tr><td>2</td><td>4</td><td>6</td><td>B</td></tr> </table>"
   expect_equal(st8,fx(res8))
   st9 <- fx(create_html_table(df1,thclass='TH',tdclass="TD",tdstyle="white-space: nowrap;"))
-  res9 <- "<div> <table> <tr> <th class=\"TH\">f1</th> <th class=\"TH\">f2</th> <th class=\"TH\">f3</th> <th class=\"TH\">f4</th> </tr> <tr><td class=\"TD\" style=\"white-space: nowrap;\">1</td><td class=\"TD\" style=\"white-space: nowrap;\">3</td><td class=\"TD\" style=\"white-space: nowrap;\">5</td><td class=\"TD\" style=\"white-space: nowrap;\">A</td></tr> <tr><td class=\"TD\" style=\"white-space: nowrap;\">2</td><td class=\"TD\" style=\"white-space: nowrap;\">4</td><td class=\"TD\" style=\"white-space: nowrap;\">6</td><td class=\"TD\" style=\"white-space: nowrap;\">B</td></tr> </table> </div>"
+  res9 <- "<table> <tr> <th class=\"TH\">f1</th> <th class=\"TH\">f2</th> <th class=\"TH\">f3</th> <th class=\"TH\">f4</th> </tr> <tr><td class=\"TD\" style=\"white-space: nowrap;\">1</td><td class=\"TD\" style=\"white-space: nowrap;\">3</td><td class=\"TD\" style=\"white-space: nowrap;\">5</td><td class=\"TD\" style=\"white-space: nowrap;\">A</td></tr> <tr><td class=\"TD\" style=\"white-space: nowrap;\">2</td><td class=\"TD\" style=\"white-space: nowrap;\">4</td><td class=\"TD\" style=\"white-space: nowrap;\">6</td><td class=\"TD\" style=\"white-space: nowrap;\">B</td></tr> </table>"
   expect_equal(st9,fx(res9))
 })
