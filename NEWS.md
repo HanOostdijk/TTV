@@ -1,8 +1,16 @@
 # TTV
 
+## TTV 0.0.0.8 
+* 13may2026
+  + new create_html_table2 (no grouping and without support for the element classes)
+  
+## TTV 0.0.0.7 
+* 19feb2026
+  + reworked create_html_table with grouping
+  
 ## TTV 0.0.0.6 
 * 29jan2026
-  + added function create_style_table
+  + added function create_style_table  
 
 ## TTV 0.0.0.5 
 * 26jan2026

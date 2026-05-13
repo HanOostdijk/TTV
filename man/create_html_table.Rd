@@ -7,16 +7,28 @@
 \usage{
 create_html_table(
   df1,
-  header = list(names(df1)),
-  tableclass = NULL,
-  thclass = NULL,
-  thstyle = NULL,
-  tdclass = NULL,
-  tdstyle = NULL,
-  caption = NULL,
-  captionclass = NULL,
-  captionstyle = NULL,
-  html_include = NULL
+  vars1 = names(df1),
+  group1 = NULL,
+  header1 = vars1,
+  caption1 = NULL,
+  gr_tr = NULL,
+  t_class = NULL,
+  t_style = NULL,
+  c_class = NULL,
+  c_style = NULL,
+  gr_class = NULL,
+  gr_style = NULL,
+  gd_class = NULL,
+  gd_style = NULL,
+  hr_class = NULL,
+  hr_style = NULL,
+  hh_class = NULL,
+  hh_style = NULL,
+  dr_class = NULL,
+  dr_style = NULL,
+  dd_class = NULL,
+  dd_style = NULL,
+  i_style = NULL
 )
 
 create_style_table(
@@ -37,25 +49,33 @@ create_style_table(
 \arguments{
 \item{df1}{data.frame for which an html table representation will be made}
 
-\item{header}{Character vector or list of character vectors or matrix of character string to use as th table headers. Each vector or matrix row generates one header row.}
+\item{vars1}{Character vector with the names of the fields to include in the detail lines in the table}
 
-\item{tableclass}{Character string with the class name to assign to the table tag}
+\item{group1}{Character string with the name of the field that will be used as group header. When NULL no groups are created}
 
-\item{thclass}{Character string with the class name to assign to the th tags}
+\item{header1}{Character vector or list of character vectors to use as th table headers. Each vector generates one header row for each of the groups}
 
-\item{thstyle}{Character string with the style information to assign to the th tags}
+\item{caption1}{Character string to use as caption for the table}
 
-\item{tdclass}{Character string with the class name to assign to the td tags}
+\item{gr_tr}{Function that transforms group1 into the group heading}
 
-\item{tdstyle}{Character string with the style information to assign to the td tags}
+\item{t_class}{Character string with the class name to assign to the table tag}
 
-\item{caption}{Character string with the table caption}
+\item{t_style}{Character string with the style information to assign to the table tag}
 
-\item{captionclass}{Character string with the class for the table caption}
+\item{c_class}{Character string with the class name to assign to the caption tag}
 
-\item{captionstyle}{Character string with the style for the table caption}
+\item{c_style}{Character string with the style information to assign to the caption tag}
 
-\item{html_include}{Character string with html code that is included before the table statement}
+\item{hr_class}{Character string with the class name to assign to the tr tags of the header lines}
+
+\item{hr_style}{Character string with the style information to assign to tr tags of the header lines}
+
+\item{hh_class}{Character string with the class name to assign to the th tags of the header lines}
+
+\item{hh_style}{Character string with the style information to assign to th tags of the header lines}
+
+\item{i_style}{Character string with info that is included with the \verb{<style>} tag before the table statement}
 
 \item{classname}{Character string with the class name to use in this style}
 
@@ -80,27 +100,33 @@ create_style_table(
 \item{color}{Character string with \code{color} definition for \code{th} and \code{td}#'}
 
 \item{white_space}{Character string with \code{white-space} definition for \code{th} and \code{td}}
+
+\item{g_class}{Character string with the class name to assign to the td tags of the group lines}
+
+\item{g_style}{Character string with the style information to assign to td tags of the group lines}
+
+\item{d_class}{Character string with the class name to assign to the td tags of the detail lines}
+
+\item{d_style}{Character string with the style information to assign to td tags of the detail lines}
 }
 \value{
 For \code{create_html_table} a list() with a shiny.tag class that can be converted into an HTML string via \code{as.character()}, viewed with \code{htmltools::browsable()} and saved to a file with \code{htmltools::save_html()} .
 
-For \code{create_style_table} a character string with the generated style block information.
+For \code{create_style_table} a character string with the generated content for the \verb{<style>} block (excluding the tags themselves)
 }
 \description{
 The function \code{create_html_table} creates the html to display the rows of a data.frame in the table format. \cr
+The row can be displayed as one block or as blocks grouped by a common field that is indicated by the \code{group1} parameter.\cr
 The header can be missing or contain one or more rows with the default being the names of the data.frame. \cr
-A classname for the table and a caption with its class and style can be specified. \cr
-Also for the \code{td} and \code{th} elements a class and style can be specified. However see the \code{create_style_table} function.\cr
-It is possible to include a character string containing html information via the \code{html_include} argument.
-This information can contain a \code{style} definition.\cr
+A caption can be specified and for all html elements a class and style can be specified. \cr E.g for the caption one can indicate \code{c_style="white-space: nowrap;caption-side: bottom;"}.\cr
+The specifications for html classes can be given in a character vector to be included with the \code{i_style} argument as a \verb{<style>} tag.\cr
 \cr
-The function \code{create_style_table} creates style information that can also be included by using the \code{html_include} argument of the \code{create_html_table} function.
+The function \code{create_style_table} creates style information that can also be included by using the \code{i_style} argument of the \code{create_html_table} function.
 This is an alternative for specifying the class and style for the \code{th} and \code{td} elements.
-The function uses a style template that is filled in with the arguments of function. See \code{template_create_style_table} in the examples.
+The function uses a style template that is filled in with the arguments of the function. See \code{template_create_style_table} in the examples.
 If the template does not satisfy your needs, you can specify your own template such as is done in the example \code{fit_table_def}.
 }
 \examples{
-\dontrun{
 
 # the style used in create_style_table is given below. The arguments of the function are glue-wise
 # inserted between (^,$) pairs with exception of classname, width and white_space that get some preprocessing:
@@ -108,7 +134,6 @@ If the template does not satisfy your needs, you can specify your own template s
 #  width1 <- ifelse((is.null(width)||(nchar(width)==0)),"",paste0("width: ",width,";"))
 #  ws1    <- ifelse((is.null(white_space)||(nchar(white_space)==0)),"",paste0("white-space: ",white_space,";"))
 template_create_style_table <- "
-<style>
   table^class1$ {
     border-collapse: collapse;
     border: ^tabborder$;
@@ -127,11 +152,9 @@ template_create_style_table <- "
   color :  ^color$ ;
   ^ws1$
 }
-</style>
   "
 
  fit_table_def <- "
- <style>
    table.fit-table {
     border: none;
     width: auto;
@@ -153,22 +176,31 @@ template_create_style_table <- "
    .is-center {
      --tabel-align: center;
   }
- </style>
   "
 
 df1 <- data.frame(f1=c(1,2),f2=c("Antwerpen","Bern"))
 tb1 <- create_html_table(df1)
-tb1 <- create_html_table(df1,tableclass="fit-table is-center",html_include=fit_table_def,
-    caption="this is my caption", captionstyle="white-space: nowrap;caption-side: bottom;")
-htmltools::browsable(tb1)
-cat( as.character(tb1) )
-htmltools::save_html(tb1,'test.html')
-}
+tb2 <- create_html_table(df1,t_class="fit-table is-center",i_style=fit_table_def,
+    caption="this is my caption", c_style="white-space: nowrap;caption-side: bottom;")
+cat( as.character(tb2) )
+#htmltools::browsable(tb2)
+#htmltools::save_html(tb2,'test.html')
+df2 <- data.frame(f1=c(1,2,3),
+                  f2=c("Antwerpen","Bern","Luik"),
+                  f3=c("België","Zwitserland","België"))
+tb3 <- create_html_table(df2,vars1=c("f1","f2"),group1="f3")
+tb4 <- create_html_table(df2,vars1=c("f1","f2"),group1="f3",
+  gr_style= "text-align:center;",
+  gd_style= "padding:8px;font-weight:800;color:red;",
+  dd_style= "border: 1px solid red;padding:16px;",
+  dr_style= "text-align:center;font-weight:800;",
+  t_style = "border: 1px solid black;border-collapse:nocollapse;")
 
-\dontrun{
-st <- create_style_table(classname="mc",tabborder="2px solid black", background_color = "#00ffFF",
+
+
+st5 <- create_style_table(classname="mc",tabborder="2px solid black", background_color = "#00ffFF",
    color="red",padding_top = "12px",padding_bottom = "2px")
-tb <- create_html_table(df1,tableclass="mc",html_include=st)
-}
+tb5 <- create_html_table(df1,t_class="mc",i_style=st5)
+cat( as.character(tb5) )
 
 }

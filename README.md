@@ -11,6 +11,7 @@ R functions that help with the administration of the website of a table
 tennis club.
 
 - create_html_table : create the html to display a data.frame
+- create_html_table2 : create the html to display a data.frame
 - read_registerpdf : read a PDF registration form into data.frame
 - gen_vcf : generate VCF information from a list
 - convert_df_vcf: convert a data.frame with VCF information to VCF text
