@@ -13,7 +13,8 @@
 #' @param caption Character string to use as caption for the table
 #' @param class Character string with the class name to assign to the table tag
 #' @param tdHTML Boolean indicating that (non-header) fields should be handled as HTML
-#' @param style_info Character string with info that is included with the `<style>` tag before the table statement
+#' @param style_info Character string with info that is included with the `<style>` tag before the table statement.
+#' Lines starting with the R comment symbol # will be removed
 #' @param html_file Character string which, if specified, indicates the filename in which the generated HTML is saved
 #' @param format_thf Function with arguments `headers` and `colspan` that formats the th elements in a tr element
 #' @param format_thd Function with arguments cell contents, `tdHTML` and optional column index that formats one td element
@@ -64,6 +65,13 @@ create_html_table2 <-
       htmltools::tags$td(x1)
     }
 
+    format_style <- function(st) {
+      # remove lines starting with the R comment symbol
+      st <- stringr::str_squish(stringr::str_split(st,"\n")[[1]])
+      paste0(st[stringr::str_detect(st,"^#",negate = T)],collapse="\n")
+
+    }
+
     if (is.null(format_thf)) format_thf <- format_th
     if (is.null(format_tdf)) format_tdf <- format_td
 
@@ -74,7 +82,7 @@ create_html_table2 <-
 
     html_table <- htmltools::tags$div(
       if (!is.null(style_info))
-        htmltools::tags$style(style_info),
+        htmltools::tags$style(format_style(style_info)),
       htmltools::tags$table(
         class = class,
         if (!is.null(caption))

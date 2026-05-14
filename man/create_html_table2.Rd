@@ -30,7 +30,8 @@ Each vector indicates for the corresponding header the column where a \code{cols
 
 \item{tdHTML}{Boolean indicating that (non-header) fields should be handled as HTML}
 
-\item{style_info}{Character string with info that is included with the \verb{<style>} tag before the table statement}
+\item{style_info}{Character string with info that is included with the \verb{<style>} tag before the table statement.
+Lines starting with the R comment symbol # will be removed}
 
 \item{class}{Character string with the class name to assign to the table tag}
 

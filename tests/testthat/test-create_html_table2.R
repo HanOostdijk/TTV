@@ -113,3 +113,94 @@ test_that("create_html_table2 new functions okay?", {
 
 })
 
+style_info <- "
+  .ttvax {width: auto; table-layout:auto ; border:none; line-height: 1; }
+  .ttvax th  {white-space: nowrap ; border:none ;
+    padding-left: 4px; padding-right: 4px;
+    padding-top: 0; padding-bottom: 8px;
+    color: #333333;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+  }
+  .ttvax td {white-space: nowrap ; border:none ;
+    padding-left: 4px; padding-right: 4px;
+    padding-top: 0; padding-bottom: 0;
+  }
+  @media screen and (max-width: 480px) {
+    .ttvax th:first-child, .ttvax td:first-child  {
+      padding-left: 0;
+    }
+    .ttvax th:last-child, .ttvax td:last-child {
+      padding-right: 0;
+    }
+    .ttvax th {letter-spacing: 0;}
+  }
+  .ttvax td:first-child  {text-align:left; }
+  .ttvax td {line-height: 1.3; }
+  .ttvax tr {text-align:center;}
+  .ttvax caption {margin-bottom:0.5em; font-weight: bold ;line-height: 1; }
+# .ttvax td:nth-child(2)
+# .ttvax td:nth-child(odd)
+# .ttvax td:nth-child(even)
+# .ttvax td:nth-child(n+3)   vanaf kolom 3
+# .ttvax td:nth-last-child(2) kolom 2 vanaf achteren geteld
+"
+
+dfNL <- tibble::tribble(
+  ~Activiteit , ~vrijdag, ~zaterdag1, ~zaterdag2, ~zondag1, ~zondag2,~maandag,
+  "Lossen vrachtwagen" , "4* (overdag)", " ", " ",  " ", " ", " ",
+  "Opbouwen zaal" , "10* (avond)", " ", " ",  " ", " ", " " ,
+  "EHBO" ," ", "2* ", "2* ",  "2* ", "2*", " " ,
+  "Zaalwacht" ," ", "4*", "4*",  "4*", "4*", " " ,
+  "Tijd/tafel schema" , " ", " 1*", "1*",  "1*", "1*", " " ,
+  "Verwerken uitslagen" , " " , "2*", "2*",  "2*", "2*", " " ,
+  "Afbouwen zaal" ," ", " ", " ",  " ", "10* (na afloop)", " " ,
+  "Laden" , " ", " ", " ",  " ", " ", "4* (overdag)"
+)
+
+headersNL <- list(
+  c(
+    "Activiteit" = "Activiteit",
+    # "vrijdag" = "12 Juni<br>vrijdag",
+    # "zaterdag1" = "13 Juni<br>Zaterdag",
+    # "zaterdag2" = " ",
+    "zondag1" = "14 Juni<br>Zondag",
+    "zondag2" = " ",
+    "maandag" = "15 Juni<br>Maandag"
+  ) ,
+  c(
+    "Activiteit" = " ",
+    # "vrijdag" = " ",
+    # "zaterdag1" = "Ochtend<br>08.15 - ±13.30",
+    # "zaterdag2" = "Middag<br>13.00 - ±19.00",
+    "zondag1" = "Ochtend<br>08.15 - ±13.30",
+    "zondag2" = "Middag<br>13.00 - ±19.00",
+    "maandag" = " "
+  )
+)
+dfNL <- dfNL |> dplyr::select(Activiteit,zondag1,zondag2,maandag)  |>
+  dplyr::rowwise() |>
+  dplyr::filter(any(dplyr::c_across(-Activiteit) != " " ))|>
+  dplyr::ungroup()
+
+dfNLzo <- dfNL |> dplyr::select(Activiteit,zondag1,zondag2) |>
+  dplyr::rowwise() |>
+  dplyr::filter(any(dplyr::c_across(-Activiteit) != " " ))|>
+  dplyr::ungroup()
+headersNLzo <- purrr::map(headersNL,\(x) x[names(x) %in% names(dfNLzo)])
+
+test_that("create_html_table2 Detailed example", {
+  var_a <- create_html_table2(dfNL,headers=headersNL, colspan=list(2,c()),
+                     caption="Schema vrijwilligers", style_info=style_info,
+                     class="ttvax", html_file="html_all.html")
+  exp_a  <-"<div> <style> .ttvax {width: auto; table-layout:auto ; border:none; line-height: 1; } .ttvax th {white-space: nowrap ; border:none ; padding-left: 4px; padding-right: 4px; padding-top: 0; padding-bottom: 8px; color: #333333; font-weight: 600; line-height: 1.1; letter-spacing: 0.02em; } .ttvax td {white-space: nowrap ; border:none ; padding-left: 4px; padding-right: 4px; padding-top: 0; padding-bottom: 0; } @media screen and (max-width: 480px) { .ttvax th:first-child, .ttvax td:first-child { padding-left: 0; } .ttvax th:last-child, .ttvax td:last-child { padding-right: 0; } .ttvax th {letter-spacing: 0;} } .ttvax td:first-child {text-align:left; } .ttvax td {line-height: 1.3; } .ttvax tr {text-align:center;} .ttvax caption {margin-bottom:0.5em; font-weight: bold ;line-height: 1; } </style> <table class=\"ttvax\"> <caption>Schema vrijwilligers</caption> <thead> <tr> <th>Activiteit</th> <th colspan=\"2\">14 Juni<br>Zondag</th> <th>15 Juni<br>Maandag</th> </tr> <tr> <th> </th> <th>Ochtend<br>08.15 - ±13.30</th> <th>Middag<br>13.00 - ±19.00</th> <th> </th> </tr> </thead> <tbody> <tr> <td>EHBO</td> <td>2* </td> <td>2*</td> <td> </td> </tr> <tr> <td>Zaalwacht</td> <td>4*</td> <td>4*</td> <td> </td> </tr> <tr> <td>Tijd/tafel schema</td> <td>1*</td> <td>1*</td> <td> </td> </tr> <tr> <td>Verwerken uitslagen</td> <td>2*</td> <td>2*</td> <td> </td> </tr> <tr> <td>Afbouwen zaal</td> <td> </td> <td>10* (na afloop)</td> <td> </td> </tr> <tr> <td>Laden</td> <td> </td> <td> </td> <td>4* (overdag)</td> </tr> </tbody> </table> </div>"
+  expect_equal(fx(var_a),exp_a )
+
+  var_b <- create_html_table2(dfNLzo,headers=headersNLzo, colspan=list(2,c()),
+                              caption="Schema vrijwilligers zondag", style_info=style_info,
+                              class="ttvax", html_file="html_zo.html")
+  exp_b  <-"<div> <style> .ttvax {width: auto; table-layout:auto ; border:none; line-height: 1; } .ttvax th {white-space: nowrap ; border:none ; padding-left: 4px; padding-right: 4px; padding-top: 0; padding-bottom: 8px; color: #333333; font-weight: 600; line-height: 1.1; letter-spacing: 0.02em; } .ttvax td {white-space: nowrap ; border:none ; padding-left: 4px; padding-right: 4px; padding-top: 0; padding-bottom: 0; } @media screen and (max-width: 480px) { .ttvax th:first-child, .ttvax td:first-child { padding-left: 0; } .ttvax th:last-child, .ttvax td:last-child { padding-right: 0; } .ttvax th {letter-spacing: 0;} } .ttvax td:first-child {text-align:left; } .ttvax td {line-height: 1.3; } .ttvax tr {text-align:center;} .ttvax caption {margin-bottom:0.5em; font-weight: bold ;line-height: 1; } </style> <table class=\"ttvax\"> <caption>Schema vrijwilligers zondag</caption> <thead> <tr> <th>Activiteit</th> <th colspan=\"2\">14 Juni<br>Zondag</th> </tr> <tr> <th> </th> <th>Ochtend<br>08.15 - ±13.30</th> <th>Middag<br>13.00 - ±19.00</th> </tr> </thead> <tbody> <tr> <td>EHBO</td> <td>2* </td> <td>2*</td> </tr> <tr> <td>Zaalwacht</td> <td>4*</td> <td>4*</td> </tr> <tr> <td>Tijd/tafel schema</td> <td>1*</td> <td>1*</td> </tr> <tr> <td>Verwerken uitslagen</td> <td>2*</td> <td>2*</td> </tr> <tr> <td>Afbouwen zaal</td> <td> </td> <td>10* (na afloop)</td> </tr> </tbody> </table> </div>"
+  expect_equal(fx(var_b),exp_b )
+}
+)
